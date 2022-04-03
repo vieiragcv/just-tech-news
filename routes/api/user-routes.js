@@ -7,8 +7,6 @@ const { User } = require('../../models');
 
 /*---------------------------------------------------------------
 -                         GET /api/users
-
--  SQL =>  SELECT * FROM users;
 ---------------------------------------------------------------*/
 
 router.get('/', (req, res) => {
@@ -25,8 +23,6 @@ router.get('/', (req, res) => {
 
 /*---------------------------------------------------------------
 -                         GET /api/users/1
-
--  SQL => SELECT * FROM users WHERE id = ?;
 ---------------------------------------------------------------*/
 
 router.get('/:id', (req, res) => {
@@ -51,9 +47,6 @@ router.get('/:id', (req, res) => {
 
 /*---------------------------------------------------------------
 -                         POST /api/users
-
--  SQL => INSERT INTO users (username, email, password)
--         VALUES ("username", "email", "password");
 ---------------------------------------------------------------*/
 
 router.post('/', (req, res) => {
@@ -69,32 +62,33 @@ router.post('/', (req, res) => {
     });
 });
 
+/*---------------------------------------------------------------
+-                         LOGIN (POST)
+---------------------------------------------------------------*/
+
 router.post('/login', (req, res) => {
 
   User.findOne({
     where: {
       email: req.body.email
     }
-
   }).then(dbUserData => {
 
     if (!dbUserData) {
       res.status(400).json({ message: 'No user with that email address!' });
       return;
     }
-
-   // res.json({ user: dbUserData });
-
-
+    const validPassword = dbUserData.checkPassword(req.body.password);
+    if (!validPassword) {
+      res.status(400).json({ message: 'Incorrect password!' });
+      return;
+    }
+    res.json({ user: dbUserData, message: 'You are now logged in!' });
   });  
 });
 
 /*---------------------------------------------------------------
 -                         PUT /api/users/1
-
-- SQL => UPDATE users
--        SET username = "username", email = "email", password = "password"
--        WHERE id = ?;
 ---------------------------------------------------------------*/
 
 router.put('/:id', (req, res) => {
@@ -119,8 +113,6 @@ router.put('/:id', (req, res) => {
 
 /*---------------------------------------------------------------
 -                         DELETE /api/users/1
-
--     SQL equiv = >
 ---------------------------------------------------------------*/
 
 router.delete('/:id', (req, res) => {
