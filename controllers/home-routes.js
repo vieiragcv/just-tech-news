@@ -2,6 +2,9 @@ const router = require('express').Router();
 const sequelize = require('../config/connection');
 const { Post, User, Comment } = require('../models');
 
+/*---------------------------------------------------------------
+-                         RENDER HOMEPAGE
+---------------------------------------------------------------*/
 
 router.get('/', (req, res) => {
   console.log(req.session);
@@ -40,6 +43,10 @@ router.get('/', (req, res) => {
     });
 });
 
+/*---------------------------------------------------------------
+-                         RENDER LOGIN PAGE
+---------------------------------------------------------------*/
+
 router.get('/login', (req, res) => {
   if (req.session.loggedIn) {
     res.redirect('/');
@@ -48,5 +55,27 @@ router.get('/login', (req, res) => {
 
   res.render('login');
 });
+
+/*---------------------------------------------------------------
+-                         RENDER POST
+---------------------------------------------------------------*/
+
+router.get('/post/:id', (req, res) => {
+  const post = {
+    id: 1,
+    post_url: 'https://handlebarsjs.com/guide/',
+    title: 'Handlebars Docs',
+    created_at: new Date(),
+    vote_count: 10,
+    comments: [{}, {}],
+    user: {
+      username: 'test_user'
+    }
+  };
+
+  res.render('single-post', { post });
+});
+
+
 
 module.exports = router;
