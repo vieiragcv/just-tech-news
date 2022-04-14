@@ -42,4 +42,12 @@ router.get('/', withAuth, (req, res) => {
     });
 });
 
+router.get('/edit/:id', withAuth, (req, res) => {
+  
+  res.render('edit-post', {
+    post,
+    loggedIn: true
+   });
+});
+
 module.exports = router;
